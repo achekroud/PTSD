@@ -46,11 +46,12 @@ label       <- ifelse(rawData$life_PTSD == 1, "HC", "PTSD")  #old classification
 simpleDem      <- rawData[,c("gender", "marital_status", "age_at_first_visit", "age_at_scan")]
 brainNames     <- names(rawData)[468:628]
 braindata      <- select(rawData, one_of(brainNames))
-corr_braindata <- 
-  
+corr_braindata <- braindata/braindata$ICV
+names(corr_braindata) <- paste0("corr_",names(braindata))
+
   
 # Combine these simple columns into a single df (as needed by NeuroMiner)
-firstPassData <- cbind(caseIDs, label, simpleDem, braindata)
+firstPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata)
 
 # Drop 2 patients with missing dts total
 firstPassData_complete <- firstPassData[complete.cases(firstPassData),]
