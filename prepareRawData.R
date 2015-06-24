@@ -49,6 +49,12 @@ braindata      <- select(rawData, one_of(brainNames))
 corr_braindata <- braindata/braindata$ICV
 names(corr_braindata) <- paste0("corr_",names(braindata))
 
+## Code to generate all pairwise interactions b/w brain features
+## Easy to get 3rd order interactions (change 2nd line to ^3)
+# tempY          <- matrix(1, nrow = length(caseIDs), ncol = 1)
+# interactMe     <- tempY ~ .^2
+# interactions   <- model.matrix(interactMe, data = corr_braindata)
+
   
 # Combine these simple columns into a single df (as needed by NeuroMiner)
 firstPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata)
