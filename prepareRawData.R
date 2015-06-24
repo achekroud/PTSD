@@ -43,11 +43,12 @@ label       <- ifelse(rawData$life_PTSD == 1, "HC", "PTSD")  #old classification
 ## names(rawData[,c(grep("*dts*", names(rawData)))]) #grep new labels
 ## rawLabel       <- rawData$X_dts_total
 ## label          <- ifelse(rawLabel == 0, 0, 1)
-simpleDem      <- rawData[,c("gender", "marital_status", "age_at_first_visit", "age_at_scan")]
-brainNames     <- names(rawData)[468:628]
-braindata      <- select(rawData, one_of(brainNames))
-corr_braindata <- braindata/braindata$ICV
-names(corr_braindata) <- paste0("corr_",names(braindata))
+simpleDem             <- rawData[,c("gender", "marital_status", "age_at_first_visit", "age_at_scan")]
+brainNames            <- names(rawData)[468:628]
+braindata             <- select(rawData, one_of(brainNames))
+corr_braindata        <- braindata/braindata$ICV
+corr_braindata$ICV    <- NULL
+names(corr_braindata) <- paste0("corr_",names(braindata)[1:dim(corr_braindata)[2]])
 
 ## Code to generate all pairwise interactions b/w brain features
 ## Easy to get 3rd order interactions (change 2nd line to ^3)
@@ -57,11 +58,11 @@ names(corr_braindata) <- paste0("corr_",names(braindata))
 
   
 # Combine these simple columns into a single df (as needed by NeuroMiner)
-firstPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata)
+secondPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata)
 
 # Drop 2 patients with missing dts total
-firstPassData_complete <- firstPassData[complete.cases(firstPassData),]
+secondPassData_complete <- secondPassData[complete.cases(secondPassData),]
 
 # Write the data as a csv (but need to manually make it xlsx for neurominer)
-write.csv(firstPassData_complete, file=paste(saveDir, "/firstPassData.csv", sep = ""), row.names = FALSE)
+write.csv(secondPassData_complete, file=paste(saveDir, "/secondPassData.csv", sep = ""), row.names = FALSE)
 
