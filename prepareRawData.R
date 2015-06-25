@@ -50,19 +50,22 @@ corr_braindata        <- braindata/braindata$ICV
 corr_braindata$ICV    <- NULL
 names(corr_braindata) <- paste0("corr_",names(braindata)[1:dim(corr_braindata)[2]])
 
-## Code to generate all pairwise interactions b/w brain features
-## Easy to get 3rd order interactions (change 2nd line to ^3)
-# tempY          <- matrix(1, nrow = length(caseIDs), ncol = 1)
-# interactMe     <- tempY ~ .^2
-# interactions   <- model.matrix(interactMe, data = corr_braindata)
+# Code to generate all pairwise interactions b/w brain features
+# Easy to get 3rd order interactions (change 2nd line to ^3)
+tempY          <- matrix(1, nrow = length(caseIDs), ncol = 1)
+interactMe     <- tempY ~ .^2
+interactions   <- model.matrix(interactMe, data = corr_braindata)
 
   
 # Combine these simple columns into a single df (as needed by NeuroMiner)
 secondPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata)
 
-# Drop 2 patients with missing dts total
-secondPassData_complete <- secondPassData[complete.cases(secondPassData),]
+# # Drop 2 patients with missing data
+# secondPassData_complete <- secondPassData[complete.cases(secondPassData),]
 
 # Write the data as a csv (but need to manually make it xlsx for neurominer)
-write.csv(secondPassData_complete, file=paste(saveDir, "/secondPassData.csv", sep = ""), row.names = FALSE)
+write.csv(secondPassData, file=paste(saveDir, "/secondPassData.csv", sep = ""), row.names = FALSE)
 
+# Third pass data includes pairwise interactions
+thirdPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata, interactions)
+write.csv(thirdPassData, file=paste(saveDir, "/thirdPassData.csv", sep = ""), row.names = FALSE)
