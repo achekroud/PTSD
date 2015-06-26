@@ -50,6 +50,8 @@ corr_braindata        <- braindata/braindata$ICV
 corr_braindata$ICV    <- NULL
 names(corr_braindata) <- paste0("corr_",names(braindata)[1:dim(corr_braindata)[2]])
 
+covs    <- rawData[,c("med_5HT", "med_antipsych", "med_moodstab", "bdi_at_scan", "tleq_total_child", "X_tleq_total_freq")]
+
 # Code to generate all pairwise interactions b/w brain features
 # Easy to get 3rd order interactions (change 2nd line to ^3)
 tempY          <- matrix(1, nrow = length(caseIDs), ncol = 1)
@@ -69,3 +71,25 @@ write.csv(secondPassData, file=paste(saveDir, "/secondPassData.csv", sep = ""), 
 # Third pass data includes pairwise interactions
 thirdPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata, interactions)
 write.csv(thirdPassData, file=paste(saveDir, "/thirdPassData.csv", sep = ""), row.names = FALSE)
+
+
+
+# Fourth pass data removes pairwise interactions (too noisy), but includes key covariates
+fourthPassData <- cbind(caseIDs, label, simpleDem, braindata, corr_braindata, covs)
+# Drop 2 patients with missing data
+fourthPassData_complete <- fourthPassData[complete.cases(fourthPassData),]
+write.csv(fourthPassData_complete, file=paste(saveDir, "/fourthPassData.csv", sep = ""), row.names = FALSE)
+
+
+
+
+
+
+# elastic <- glmnet(y = thirdPassData$label2, x = as.matrix(thirdPassData[,3:13208]), family = "binomial", alpha = 1)
+# summary(elastic)
+# 
+# cv.elastic <- cv.glmnet(y = thirdPassData$label2, x = as.matrix(thirdPassData[,3:13208]), family = "binomial", type.measure = "class")
+# summary(cv.elastic)
+# coefz   <- coef(cv.elastic, s = "lambda.min")
+# nonzeroz <- coefz[coefz[,1]<0,1]
+
