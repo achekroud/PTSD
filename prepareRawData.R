@@ -50,7 +50,7 @@ corr_braindata        <- braindata/braindata$ICV
 corr_braindata$ICV    <- NULL
 names(corr_braindata) <- paste0("corr_",names(braindata)[1:dim(corr_braindata)[2]])
 
-covs    <- rawData[,c("med_5HT", "med_antipsych", "med_moodstab", "bdi_at_scan", "tleq_total_child", "X_tleq_total_freq")]
+covs    <- rawData[,c("med_5HT", "med_antipsych", "med_moodstab", "bdi_at_scan")]
 
 # Code to generate all pairwise interactions b/w brain features
 # Easy to get 3rd order interactions (change 2nd line to ^3)
